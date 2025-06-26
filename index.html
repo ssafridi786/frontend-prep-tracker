@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frontend Prep App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Frontend Interview Prep</h1>
+
+  <!-- Source Section -->
+  <section>
+    <h2>Sources</h2>
+    <ul id="sourceList"></ul>
+    <input type="text" id="newSource" placeholder="Add new source URL" />
+    <button onclick="addSource()">Add Source</button>
+  </section>
+
+  <!-- Daily Schedule Section -->
+  <section>
+    <h2>Daily Schedule</h2>
+    <ul id="scheduleList"></ul>
+  </section>
+
+  <!-- Popup Modal -->
+  <div id="scheduleModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h3>Edit Schedule</h3>
+      <p id="modalTime"></p>
+      <textarea id="modalNotes" placeholder="What did you do?"></textarea>
+      <input type="time" id="modalTimeChange" />
+      <button onclick="saveModalChanges()">Save</button>
+    </div>
+  </div>
+
+  <!-- Today's Focus Section -->
+  <section>
+    <h2>Today's Focus</h2>
+    <ul id="focusList"></ul>
+    <input type="text" id="focusConcept" placeholder="Add new concept from roadmap" />
+    <button onclick="addFocusConcept()">Add Concept</button>
+  </section>
+
+  <!-- Task Manager Section -->
+  <section>
+    <h2>Task Manager</h2>
+    <ul id="taskList"></ul>
+    <input type="text" id="newTask" placeholder="New Task" />
+    <input type="text" id="taskLink" placeholder="Source Link (optional)" />
+    <button onclick="addTask()">Add Task</button>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
