@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Interview Prep Dashboard - 30 Days</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <meta name="google-site-verification" content="jKzA81nq7H4ewpceebq5l4trcPxJiJT2JBnYXaffmJ4" />
+</head>
+<body>
+    <div id="loadingIndicator" class="loading-indicator active">
+        <div class="spinner"></div>
+        <p>Loading Dashboard...</p>
+    </div>
+
+    <div id="authContainer" class="auth-container">
+        <div class="auth-box">
+            <h1>Welcome Back!</h1>
+            <p>Please sign in to continue.</p>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" required autocomplete="current-password">
+                </div>
+                <button type="button" class="btn btn--primary btn--full-width" id="loginButton">Sign In</button>
+            </form>
+            <div id="userInfo" class="user-info hidden">
+                <p>Signed in as:</p>
+                <code id="userIdDisplay"></code>
+                <button class="btn btn--secondary btn--sm" id="logoutButton">Sign Out</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container" id="appContainer" style="display: none;">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>🚀 Frontend Interview Prep</h1>
+                    <p class="header-subtitle">30-Day Master Plan</p>
+                </div>
+                <div class="header-center">
+                    <div class="current-day">
+                        <span class="day-label">Day</span>
+                        <span class="day-number" id="currentDay">1</span>
+                        <span class="day-total">of 30</span>
+                    </div>
+                    <div class="current-date" id="currentDate"></div>
+                </div>
+                <div class="header-right">
+                    <div class="streak-counter">
+                        <div class="streak-number" id="streakCount">0</div>
+                        <div class="streak-label">Day Streak</div>
+                        <div class="streak-chain" id="streakChain"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="overall-progress">
+                <div class="progress-label">Overall Progress</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="overallProgress" style="width: 0%"></div>
+                </div>
+                <div class="progress-percentage" id="progressPercentage">0%</div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <nav class="roadmap-nav">
+                    <h3>📍 Roadmap Sections</h3>
+                    <div class="roadmap-sections" id="roadmapSections"></div>
+                </nav>
+                
+                <div class="quick-links">
+                    <h3>🔗 Learning Sources</h3>
+                    <div class="source-links" id="sourceLinks">
+                    </div>
+                    <div class="input-group" style="margin-top: 12px;">
+                        <input type="text" id="newSourceName" class="form-control" placeholder="Display Name">
+                        <input type="text" id="newSourceUrl" class="form-control" placeholder="Add Source URL">
+                        <button class="btn btn--sm btn--primary" id="addSourceBtn">Add</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Today's Focus -->
+                <section class="today-section">
+                    <h2>📅 Today's Focus - Day <span id="todayDay">1</span></h2>
+                    <div class="current-section" id="currentSection">
+                        <div class="section-header">
+                            <h3 id="sectionTitle">Internet & Web Fundamentals</h3>
+                            <div class="section-progress" style="width: 200px;">
+                                <div class="progress-bar small">
+                                    <div id="sectionProgress" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section-topics" id="sectionTopics">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Time Schedule -->
+                <section class="schedule-section">
+                    <h2>⏰ Daily Schedule</h2>
+                    <div class="time-slots" id="timeSlots">
+                    </div>
+                </section>
+                 
+                <div id="scheduleModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 id="scheduleModalTitle">Edit Time Slot</h3>
+                            <button class="modal-close" id="closeScheduleModalBtn">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                             <div class="form-group">
+                                <label class="form-label">Start Time</label>
+                                <input type="time" class="form-control" id="scheduleStartTime">
+                            </div>
+                             <div class="form-group">
+                                <label class="form-label">End Time</label>
+                                <input type="time" class="form-control" id="scheduleEndTime">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Notes:</label>
+                                <textarea id="scheduleNotes" class="form-control" rows="3" placeholder="Log your activities, challenges, and breakthroughs..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn--secondary" id="cancelScheduleBtn">Cancel</button>
+                            <button class="btn btn--primary" id="saveScheduleBtn">Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task Management -->
+                <section class="tasks-section">
+                    <div class="tasks-header">
+                        <h2>✅ Task Manager</h2>
+                        <div class="task-controls">
+                            <button class="btn btn--primary btn--sm" id="addNewTaskBtn">+ Add Task</button>
+                            <button class="btn btn--secondary btn--sm" id="exportWeeklyCSVBtn">📊 Export Week</button>
+                        </div>
+                    </div>
+                    
+                    <div class="task-filters">
+                        <select class="form-control" id="statusFilter">
+                            <option value="all">All Status</option>
+                            <option value="not-started">Not Started</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                        <select class="form-control" id="sourceFilter">
+                            <option value="all">All Sources</option>
+                        </select>
+                    </div>
+
+                    <div class="task-table-container">
+                        <table class="task-table" id="taskTable">
+                            <thead>
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Source</th>
+                                    <th>Due Date</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="taskTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <div id="roadmapConceptsModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Select Related Concepts</h3>
+                            <button class="modal-close" id="closeConceptsModalBtn">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Check off other topics you covered today.</p>
+                            <div id="roadmapConceptsList"></div>
+                        </div>
+                        <div class="modal-footer">
+                             <button class="btn btn--primary" id="saveConceptsBtn">Done</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Progress Charts -->
+                <section class="charts-section">
+                    <h2>📊 Progress Analytics</h2>
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <canvas id="progressChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="dailyChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Daily Reflection Footer -->
+        <footer class="reflection-footer">
+            <div class="reflection-content">
+                <h3>🌙 Daily Reflection</h3>
+                <div class="reflection-grid">
+                    <div class="reflection-item">
+                        <label class="form-label">What did you learn today?</label>
+                        <textarea class="form-control" id="todayLearning" rows="2" placeholder="Key concepts and insights..."></textarea>
+                    </div>
+                    <div class="reflection-item">
+                        <label class="form-label">Challenges faced</label>
+                        <textarea class="form-control" id="todayChallenges" rows="2" placeholder="Difficulties and obstacles..."></textarea>
+                    </div>
+                    <div class="reflection-item">
+                        <label class="form-label">Tomorrow's goals</label>
+                        <textarea class="form-control" id="tomorrowGoals" rows="2" placeholder="What to focus on next..."></textarea>
+                    </div>
+                    <div class="reflection-item">
+                        <label class="form-label">Productivity Rating</label>
+                        <div class="rating-stars" id="productivityRating">
+                            <span class="star" data-rating="1">⭐</span>
+                            <span class="star" data-rating="2">⭐</span>
+                            <span class="star" data-rating="3">⭐</span>
+                            <span class="star" data-rating="4">⭐</span>
+                            <span class="star" data-rating="5">⭐</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="reflection-actions">
+                    <button class="btn btn--secondary" id="saveReflectionBtn">💾 Save Reflection</button>
+                    <button class="btn btn--primary" id="suggestGoalsBtn">✨ Suggest Goals for Tomorrow</button>
+                    <button class="btn btn--secondary" id="markDayCompleteBtn">✅ Mark Day Complete</button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Task Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Task</h3>
+                <button class="modal-close" id="closeTaskModalBtn">&times;</button>
+            </div>
+            <form id="taskForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Task Name</label>
+                        <input type="text" class="form-control" id="taskName" placeholder="Enter task name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Source</label>
+                        <select class="form-control" id="taskSource">
+                            <option value="">Select source</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Due Date</label>
+                        <input type="date" class="form-control" id="taskDueDate">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Priority</label>
+                        <select class="form-control" id="taskPriority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-control" id="taskStatus">
+                            <option value="not-started">Not Started</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn--secondary" id="cancelTaskBtn">Cancel</button>
+                    <button type="button" class="btn btn--primary" id="saveTaskBtn">Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Generic Modal for Alerts and Confirms -->
+    <div id="genericModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="genericModalTitle">Notification</h3>
+                <button class="modal-close" id="genericModalCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="ai-spinner" class="spinner" style="margin: 16px auto;"></div>
+                <p id="genericModalMessage" style="white-space: pre-wrap;"></p>
+            </div>
+            <div class="modal-footer" id="genericModalFooter">
+                <!-- Buttons will be injected here by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
